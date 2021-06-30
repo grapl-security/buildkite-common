@@ -48,8 +48,7 @@ oneTimeSetUp() {
     export GIT_AUTHOR_NAME="Testy McTestface"
     export GIT_AUTHOR_EMAIL="tests@tests.com"
 
-    # This is the file we're actually testing
-    # shellcheck source=lib/rc.sh
+    # shellcheck source-path=SCRIPTDIR
     source "$(dirname "${BASH_SOURCE[0]}")/rc.sh"
 }
 

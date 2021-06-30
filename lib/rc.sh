@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-# shellcheck source=lib/util.sh
+# shellcheck source-path=SCRIPTDIR
 source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
-# shellcheck source=lib/pulumi.sh
+# shellcheck source-path=SCRIPTDIR
 source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
 
 # Given a project and stack name, and a flat JSON object as an input

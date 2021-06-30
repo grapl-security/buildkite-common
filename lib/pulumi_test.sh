@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 oneTimeSetUp() {
-    # shellcheck source=lib/pulumi.sh
+    # shellcheck source-path=SCRIPTDIR
     source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
 }
 

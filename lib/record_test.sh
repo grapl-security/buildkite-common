@@ -13,7 +13,7 @@ recorded_commands() {
 
 oneTimeSetUp() {
     export ALL_COMMANDS="${SHUNIT_TMPDIR}/all_commands"
-    # shellcheck source=lib/record.sh
+    # shellcheck source-path=SCRIPTDIR
     source "$(dirname "${BASH_SOURCE[0]}")/record.sh"
 }
 

@@ -35,14 +35,16 @@ add_artifacts() {
     # Figure out which commands to send pulumi.
     # requires pex be built
     get_pulumi_commands="${ARTIFACTS_INTO_JSON_PEX} \
-        --input_json=\"${input_json}\" \
+        --input_json='${input_json}' \
         --cwd=${cwd} \
         --stack=${stack_fq} \
     "
+    pulumi_commands_str=$(eval "${get_pulumi_commands}")
     # grab \n-delimed commands into a bash array $pulumi_commands
-    mapfile -t pulumi_commands < <(${get_pulumi_commands})
+    readarray -t pulumi_commands <<<"${pulumi_commands_str}"
+
     for pulumi_command in "${pulumi_commands[@]}"; do
-        eval "$pulumi_command"
+        $(${pulumi_command})
     done
 
 }

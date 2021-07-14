@@ -28,18 +28,31 @@ PulumiKVPair = NamedTuple(
 )
 
 
+def _assert_no_periods(input: str) -> None:
+    assert (
+        "." not in input
+    ), f"Can't use a period in a key - reserved in Pulumi as a delim: {input}"
+
+
+def _assert_no_newlines(input: str) -> None:
+    # (this program spits out commands delimited by \n).
+    # decision can always be revisited.
+    assert (
+        "\n" not in input
+    ), f"Can't use a newline, we use it for py-to-bash stdout: {input}"
+
+
 def _get_key_values_recursive(
     keys_to_here: List[str],
     curr: Any,  # dict or primitive
 ) -> Iterable[PulumiKVPair]:
     """
-    spit out tuples of ("artifacts.some-amis.us-east-2", "ami-222")
+    yields things like PulumiKVPair("artifacts.some-amis.us-east-2", "ami-222")
     """
     if isinstance(curr, dict):
         for (k, v) in curr.items():
-            assert (
-                "." not in k
-            ), "Can't use a period in a key - reserved in Pulumi as a  delim"
+            _assert_no_periods(k)
+            _assert_no_newlines(k)
             # re-yield things from our recurse
             yield from _get_key_values_recursive([*keys_to_here, k], v)
     elif isinstance(curr, list):
@@ -48,6 +61,8 @@ def _get_key_values_recursive(
         # deals with `True` becoming `true`, among oher things
         if isinstance(curr, bool):
             curr = str(curr).lower()
+        if isinstance(curr, str):
+            _assert_no_newlines(curr)
         yield PulumiKVPair(key=".".join(keys_to_here), value=curr)
     else:
         raise Exception(f"Unhandled object {curr}")

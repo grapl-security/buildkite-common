@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
+THIS_DIR=$(dirname "${BASH_SOURCE[0]}")
+readonly THIS_DIR
 # shellcheck source-path=SCRIPTDIR
-source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
+source "${THIS_DIR}/util.sh"
 # shellcheck source-path=SCRIPTDIR
-source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
+source "${THIS_DIR}/pulumi.sh"
 
 # Given a project and stack name, and a flat JSON object as an input
 # string, adds each key-value pair the Pulumi configuration for that
@@ -19,15 +21,21 @@ source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
 add_artifacts() {
     local -r stack="${1}"
     local -r input_json="${2}"
+    local -r cwd="$(project_directory "${stack}")"
+    local -r stack_fq="$(fully_qualified_stack_name "${stack}")"
 
-    jq -r 'to_entries | .[] | [.key, .value] | @tsv' <<< "${input_json}" |
-        while IFS=$'\t' read -r key value; do
-            pulumi config set \
-                --path "artifacts.${key}" \
-                "${value}" \
-                --cwd="$(project_directory "${stack}")" \
-                --stack="$(fully_qualified_stack_name "${stack}")"
-        done
+    # Requires binary be built
+    get_pulumi_commands="lib/artifacts_json_into_pulumi.pex \
+        --input_json='${input_json}' \
+        --cwd='${cwd}' \
+        --stack='${stack_fq}' \
+    "
+    # grab \n-delimed commands into a bash array $pulumi_commands
+    mapfile -t pulumi_commands < <(${get_pulumi_commands})
+    for pulumi_command in "${pulumi_commands[@]}"; do
+        eval "$pulumi_command"
+    done
+
 }
 
 # Generate a commit message for this containing metadata about the

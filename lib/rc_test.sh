@@ -78,8 +78,8 @@ test_add_artifacts_with_artifacts() {
 
     expected=$(
         cat << EOF
-pulumi config set --path artifacts.app1 v1.0.0 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app2 v1.2.0 --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app1" "v1.0.0" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app2" "v1.2.0" --cwd=pulumi/cicd --stack=grapl/cicd/production
 EOF
     )
 
@@ -160,8 +160,8 @@ test_update_stack_config_for_commit_with_new_artifacts_without_existing() {
         cat << EOF
 pulumi config get artifacts --cwd=pulumi/cicd --stack=grapl/cicd/production
 git show main:pulumi/cicd/Pulumi.production.yaml
-pulumi config set --path artifacts.app1 v9.9.9 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app2 v1.0alpha --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app1" "v9.9.9" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app2" "v1.0alpha" --cwd=pulumi/cicd --stack=grapl/cicd/production
 git add --verbose pulumi/cicd/Pulumi.production.yaml
 EOF
     )
@@ -193,10 +193,10 @@ test_update_stack_config_for_commit_with_new_artifacts_with_existing() {
         cat << EOF
 pulumi config get artifacts --cwd=pulumi/cicd --stack=grapl/cicd/production
 git show main:pulumi/cicd/Pulumi.production.yaml
-pulumi config set --path artifacts.app1 v9.9.8 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app3 0.0.1 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app1 v9.9.9 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app2 v1.0alpha --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app1" "v9.9.8" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app3" "0.0.1" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app1" "v9.9.9" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app2" "v1.0alpha" --cwd=pulumi/cicd --stack=grapl/cicd/production
 git add --verbose pulumi/cicd/Pulumi.production.yaml
 EOF
     )
@@ -214,8 +214,8 @@ test_update_stack_config_for_commit_without_new_artifacts_with_existing() {
         cat << EOF
 pulumi config get artifacts --cwd=pulumi/cicd --stack=grapl/cicd/production
 git show main:pulumi/cicd/Pulumi.production.yaml
-pulumi config set --path artifacts.app1 v9.9.8 --cwd=pulumi/cicd --stack=grapl/cicd/production
-pulumi config set --path artifacts.app3 0.0.1 --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app1" "v9.9.8" --cwd=pulumi/cicd --stack=grapl/cicd/production
+pulumi config set --path "artifacts.app3" "0.0.1" --cwd=pulumi/cicd --stack=grapl/cicd/production
 git add --verbose pulumi/cicd/Pulumi.production.yaml
 EOF
     )

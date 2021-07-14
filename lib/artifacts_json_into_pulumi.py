@@ -59,7 +59,7 @@ def _artifacts_json_into_pulumi(
     cwd: str,
 ) -> Iterable[str]:
     # prepend all of these with `artifacts.`
-    assert isinstance(input_json, dict)
+    assert isinstance(input_json, dict), f"expected dict, got {type(input_json)}"
     kv_pairs = _get_key_values_recursive(keys_to_here=["artifacts"], curr=input_json)
     for (k, v) in kv_pairs:
         yield f'pulumi config set --path "{k}" "{v}" --cwd={cwd} --stack={stack}'

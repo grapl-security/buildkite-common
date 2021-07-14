@@ -9,6 +9,14 @@ source "${THIS_DIR}/util.sh"
 # shellcheck source-path=SCRIPTDIR
 source "${THIS_DIR}/pulumi.sh"
 
+ARTIFACTS_INTO_JSON_PEX="${THIS_DIR}/artifacts_json_into_pulumi.pex"
+
+function join_by {
+    local IFS="$1"
+    shift
+    echo "$*"
+}
+
 # Given a project and stack name, and a flat JSON object as an input
 # string, adds each key-value pair the Pulumi configuration for that
 # stack.
@@ -24,11 +32,12 @@ add_artifacts() {
     local -r cwd="$(project_directory "${stack}")"
     local -r stack_fq="$(fully_qualified_stack_name "${stack}")"
 
-    # Requires binary be built
-    get_pulumi_commands="lib/artifacts_json_into_pulumi.pex \
-        --input_json='${input_json}' \
-        --cwd='${cwd}' \
-        --stack='${stack_fq}' \
+    # Figure out which commands to send pulumi.
+    # requires pex be built
+    get_pulumi_commands="${ARTIFACTS_INTO_JSON_PEX} \
+        --input_json=\"${input_json}\" \
+        --cwd=${cwd} \
+        --stack=${stack_fq} \
     "
     # grab \n-delimed commands into a bash array $pulumi_commands
     mapfile -t pulumi_commands < <(${get_pulumi_commands})

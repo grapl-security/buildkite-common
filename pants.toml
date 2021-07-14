@@ -3,7 +3,9 @@ pants_version = "2.5.1rc3"
 backend_packages = [
     "pants.backend.shell",
     "pants.backend.shell.lint.shellcheck",
-    "pants.backend.shell.lint.shfmt"
+    "pants.backend.shell.lint.shfmt",
+    "pants.backend.python",
+    # TODO: python linters, typechecks
 ]
 
 pants_ignore = [

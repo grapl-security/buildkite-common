@@ -16,11 +16,33 @@ source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
 #     pulumi config set --path "artifacts.foo" "123" --cwd=pulumi/cicd --stack=grapl/production
 #     pulumi config set --path "artifacts.bar" "456" --cwd=pulumi/cicd --stack=grapl/production
 #
+
+flatten_json() {
+    # The purpose of this module is to convert something like the following json:
+    # {
+    #     "some-amis": {
+    #         "us-east-1": "ami-111",
+    #     }
+    # }
+    # into { "some-amis.us-east-1": "ami-111" }
+
+    local -r input_json="${1}"
+    jq -r '
+        . as $in 
+        | reduce leaf_paths as $path (
+            {};
+            . + { ($path | map(tostring) | join(".")): $in | getpath($path) }
+        )
+    ' <<< "${input_json}"
+}
+
 add_artifacts() {
     local -r stack="${1}"
     local -r input_json="${2}"
 
-    jq -r 'to_entries | .[] | [.key, .value] | @tsv' <<< "${input_json}" |
+    flattened_input_json=$(flatten_json "${input_json}")
+
+    jq -r 'to_entries | .[] | [.key, .value] | @tsv' <<< "${flattened_input_json}" |
         while IFS=$'\t' read -r key value; do
             pulumi config set \
                 --path "artifacts.${key}" \

@@ -3,6 +3,8 @@
 set -euo pipefail
 
 # shellcheck source-path=SCRIPTDIR
+source "$(dirname "${BASH_SOURCE[0]}")/json_tools.sh"
+# shellcheck source-path=SCRIPTDIR
 source "$(dirname "${BASH_SOURCE[0]}")/util.sh"
 # shellcheck source-path=SCRIPTDIR
 source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
@@ -16,26 +18,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/pulumi.sh"
 #     pulumi config set --path "artifacts.foo" "123" --cwd=pulumi/cicd --stack=grapl/production
 #     pulumi config set --path "artifacts.bar" "456" --cwd=pulumi/cicd --stack=grapl/production
 #
-
-flatten_json() {
-    # The purpose of this module is to convert something like the following json:
-    # {
-    #     "some-amis": {
-    #         "us-east-1": "ami-111",
-    #     }
-    # }
-    # into { "some-amis.us-east-1": "ami-111" }
-
-    local -r input_json="${1}"
-    # https://stackoverflow.com/a/37557003
-    jq -r '
-        . as $in 
-        | reduce leaf_paths as $path (
-            {};
-            . + { ($path | map(tostring) | join(".")): $in | getpath($path) }
-        )
-    ' <<< "${input_json}"
-}
 
 add_artifacts() {
     local -r stack="${1}"

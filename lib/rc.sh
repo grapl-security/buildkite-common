@@ -27,6 +27,7 @@ flatten_json() {
     # into { "some-amis.us-east-1": "ami-111" }
 
     local -r input_json="${1}"
+    # https://stackoverflow.com/a/37557003
     jq -r '
         . as $in 
         | reduce leaf_paths as $path (
